@@ -381,10 +381,38 @@ def transactions():
                     result = cursor.fetchone()
                     total_spent = result['total_spent'] if result else 0
                     
-                    # Check if budget is exceeded
-                    if total_spent > budget_goal['target_amount']:
-                        amount_exceeded = abs(total_spent - budget_goal['target_amount'])
-                        flash(f'Budget Alert! {random.choice(messages_90)} You\'ve exceeded your {budget_goal["period"]} budget for {budget_goal["category_name"]} ({category["date_range"]}) by ₹{amount_exceeded:.2f}!', 'budget')
+                    # Calculate percentage
+                    percentage = (total_spent / budget_goal['target_amount']) * 100
+                    
+                    # Add budget notifications
+                    if percentage >= 90:
+                        messages_90 = [
+                            'Budget Alert: You have reached 90% of your budget limit. Please review your spending.',
+                            'Budget Warning: 90% of your allocated budget has been utilized. Consider adjusting your expenses.',
+                            'Budget Notification: Your spending has reached 90% of the budget threshold.',
+                            'Budget Alert: You are approaching your budget limit with 90% utilization.'
+                        ]
+                        if total_spent > budget_goal['target_amount']:
+                            amount_exceeded = total_spent - budget_goal['target_amount']
+                            flash(f'Budget Alert! {random.choice(messages_90)} You\'ve exceeded your {budget_goal["period"]} budget for {budget_goal["category_name"]} by ₹{amount_exceeded:.2f}!', 'budget')
+                        else:
+                            flash(f'Budget Alert! {random.choice(messages_90)} You\'ve used {percentage:.1f}% of your {budget_goal["period"]} budget for {budget_goal["category_name"]}!', 'budget')
+                    elif percentage >= 80:
+                        messages_80 = [
+                            'Budget Notice: You have utilized 80% of your budget. Please monitor your spending carefully.',
+                            'Budget Update: 80% of your budget has been spent. Consider reviewing your expenses.',
+                            'Budget Alert: Your spending has reached 80% of the allocated budget.',
+                            'Budget Warning: You are approaching 80% of your budget limit.'
+                        ]
+                        flash(f'Budget Alert! {random.choice(messages_80)} You\'ve used {percentage:.1f}% of your {budget_goal["period"]} budget for {budget_goal["category_name"]}!', 'budget')
+                    elif percentage >= 50:
+                        messages_50 = [
+                            'Budget Update: You have spent 50% of your allocated budget.',
+                            'Budget Notice: Half of your budget has been utilized.',
+                            'Budget Status: 50% of your budget has been spent.',
+                            'Budget Update: You have reached the halfway point of your budget.'
+                        ]
+                        flash(f'Budget Alert! {random.choice(messages_50)} You\'ve spent ₹{total_spent:.2f} out of ₹{budget_goal["target_amount"]:.2f} for {budget_goal["category_name"]}', 'budget')
                 
                 connection.commit()
                 flash('Transaction added successfully!', 'success')
