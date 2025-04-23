@@ -428,6 +428,38 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     filterCategories(transactionType.value);
+
+    transactionForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const transactionId = document.getElementById('transaction_id').value;
+        const formData = new FormData(this);
+        
+        if (transactionId) {
+            // Update existing transaction
+            fetch(`/api/transactions/${transactionId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    amount: formData.get('amount'),
+                    description: formData.get('description'),
+                    date: formData.get('date'),
+                    category_id: formData.get('category_id')
+                })
+            })
+            .then(response => {
+                if (response.ok) {
+                    window.location.reload();
+                } else {
+                    alert('Error updating transaction');
+                }
+            });
+        } else {
+            // Add new transaction
+            this.submit();
+        }
+    });
 });
 </script>
 {% endblock %}

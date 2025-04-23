@@ -490,7 +490,7 @@ def unread_notifications_count():
         if connection:
             connection.close()
 
-@app.route('/api/transactions/<int:transaction_id>', methods=['GET', 'DELETE'])
+@app.route('/api/transactions/<int:transaction_id>', methods=['GET', 'DELETE', 'PUT'])
 @login_required
 def transaction_api(transaction_id):
     connection = get_db_connection()
@@ -534,6 +534,40 @@ def transaction_api(transaction_id):
                          (transaction_id, current_user.id))
             connection.commit()
             return jsonify({'message': 'Transaction deleted successfully'})
+        
+        elif request.method == 'PUT':
+            # Update the transaction
+            data = request.get_json()
+            
+            # Verify the transaction exists and belongs to the user
+            cursor.execute("""
+                SELECT * FROM transactions 
+                WHERE id = %s AND user_id = %s
+            """, (transaction_id, current_user.id))
+            transaction = cursor.fetchone()
+            
+            if not transaction:
+                return jsonify({'error': 'Transaction not found'}), 404
+            
+            # Update the transaction
+            cursor.execute("""
+                UPDATE transactions 
+                SET amount = %s, 
+                    description = %s, 
+                    date = %s, 
+                    category_id = %s
+                WHERE id = %s AND user_id = %s
+            """, (
+                data['amount'],
+                data['description'],
+                data['date'],
+                data['category_id'],
+                transaction_id,
+                current_user.id
+            ))
+            
+            connection.commit()
+            return jsonify({'message': 'Transaction updated successfully'}), 200
     
     except Exception as e:
         print(f"Error in transaction API: {e}")
