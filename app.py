@@ -383,8 +383,8 @@ def transactions():
                     
                     # Check if budget is exceeded
                     if total_spent > budget_goal['target_amount']:
-                        amount_exceeded = total_spent - budget_goal['target_amount']
-                        flash(f'Budget Alert! You have exceeded your {budget_goal["period"]} budget for {budget_goal["category_name"]} by ₹{amount_exceeded:.2f}', 'warning')
+                        amount_exceeded = abs(total_spent - budget_goal['target_amount'])
+                        flash(f'Budget Alert! {random.choice(messages_90)} You\'ve exceeded your {budget_goal["period"]} budget for {budget_goal["category_name"]} ({category["date_range"]}) by ₹{amount_exceeded:.2f}!', 'budget')
                 
                 connection.commit()
                 flash('Transaction added successfully!', 'success')
