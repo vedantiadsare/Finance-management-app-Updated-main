@@ -956,7 +956,7 @@ def dashboard():
                     else:  # daily
                         category['date_range'] = today.strftime('%d %b %Y')
                     
-                    # Add fun notifications based on budget usage
+                    # Add budget notifications
                     if actual_percentage >= 90:
                         messages_90 = [
                             'Budget Alert: You have reached 90% of your budget limit. Please review your spending.',
@@ -964,8 +964,11 @@ def dashboard():
                             'Budget Notification: Your spending has reached 90% of the budget threshold.',
                             'Budget Alert: You are approaching your budget limit with 90% utilization.'
                         ]
-                        exceeded = category['spent'] - category['target_amount']
-                        flash(f'Budget Alert! {random.choice(messages_90)} You\'ve exceeded your {category["period"]} budget for {category["name"]} ({category["date_range"]}) by ₹{exceeded:.2f}!', 'budget')
+                        if category['spent'] > category['target_amount']:
+                            amount_exceeded = category['spent'] - category['target_amount']
+                            flash(f'Budget Alert! {random.choice(messages_90)} You\'ve exceeded your {category["period"]} budget for {category["name"]} ({category["date_range"]}) by ₹{amount_exceeded:.2f}!', 'budget')
+                        else:
+                            flash(f'Budget Alert! {random.choice(messages_90)} You\'ve spent ₹{category["spent"]:.2f} out of ₹{category["target_amount"]:.2f} for {category["name"]} ({category["date_range"]})!', 'budget')
                     elif actual_percentage >= 80:
                         messages_80 = [
                             'Budget Notice: You have utilized 80% of your budget. Please monitor your spending carefully.',
@@ -973,7 +976,7 @@ def dashboard():
                             'Budget Alert: Your spending has reached 80% of the allocated budget.',
                             'Budget Warning: You are approaching 80% of your budget limit.'
                         ]
-                        flash(f'Budget Alert! {random.choice(messages_80)} You\'ve used {actual_percentage:.1f}% of your {category["period"]} budget for {category["name"]} ({category["date_range"]})!', 'budget')
+                        flash(f'Budget Alert! {random.choice(messages_80)} You\'ve spent ₹{category["spent"]:.2f} out of ₹{category["target_amount"]:.2f} for {category["name"]} ({category["date_range"]})!', 'budget')
                     elif actual_percentage >= 50:
                         messages_50 = [
                             'Budget Update: You have spent 50% of your allocated budget.',
@@ -1088,7 +1091,7 @@ def budget():
                 else:  # daily
                     category['date_range'] = today.strftime('%d %b %Y')
                 
-                # Add fun notifications based on budget usage
+                # Add budget notifications
                 if actual_percentage >= 90:
                     messages_90 = [
                         'Budget Alert: You have reached 90% of your budget limit. Please review your spending.',
@@ -1096,8 +1099,11 @@ def budget():
                         'Budget Notification: Your spending has reached 90% of the budget threshold.',
                         'Budget Alert: You are approaching your budget limit with 90% utilization.'
                     ]
-                    exceeded = category['spent'] - category['target_amount']
-                    flash(f'Budget Alert! {random.choice(messages_90)} You\'ve exceeded your {category["period"]} budget for {category["name"]} ({category["date_range"]}) by ₹{exceeded:.2f}!', 'budget')
+                    if category['spent'] > category['target_amount']:
+                        amount_exceeded = category['spent'] - category['target_amount']
+                        flash(f'Budget Alert! {random.choice(messages_90)} You\'ve exceeded your {category["period"]} budget for {category["name"]} ({category["date_range"]}) by ₹{amount_exceeded:.2f}!', 'budget')
+                    else:
+                        flash(f'Budget Alert! {random.choice(messages_90)} You\'ve spent ₹{category["spent"]:.2f} out of ₹{category["target_amount"]:.2f} for {category["name"]} ({category["date_range"]})!', 'budget')
                 elif actual_percentage >= 80:
                     messages_80 = [
                         'Budget Notice: You have utilized 80% of your budget. Please monitor your spending carefully.',
@@ -1105,7 +1111,7 @@ def budget():
                         'Budget Alert: Your spending has reached 80% of the allocated budget.',
                         'Budget Warning: You are approaching 80% of your budget limit.'
                     ]
-                    flash(f'Budget Alert! {random.choice(messages_80)} You\'ve used {actual_percentage:.1f}% of your {category["period"]} budget for {category["name"]} ({category["date_range"]})!', 'budget')
+                    flash(f'Budget Alert! {random.choice(messages_80)} You\'ve spent ₹{category["spent"]:.2f} out of ₹{category["target_amount"]:.2f} for {category["name"]} ({category["date_range"]})!', 'budget')
                 elif actual_percentage >= 50:
                     messages_50 = [
                         'Budget Update: You have spent 50% of your allocated budget.',
